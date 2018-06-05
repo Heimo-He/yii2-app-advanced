@@ -71,7 +71,18 @@ class User extends ActiveRecord implements IdentityInterface
     {
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
     }
-
+    /**
+     * 生成 access_token
+     */
+    public function generateAccessToken()
+    {
+        Yii::$app->cache->delete('access-token_' . $this->access_token);
+        $this->access_token = md5(Yii::$app->security->generateRandomString() . 'API@#$_2.0^&*' . microtime());
+        $time = Yii::$app->params['login_timeout'];
+        $accessTokenMaxAge = $time ? $time : (30 * 60);
+        Yii::$app->cache->set('access-token_' . $this->access_token, time() + $accessTokenMaxAge, $accessTokenMaxAge);
+        $this->save();
+    }
     /**
      * Finds user by username
      *
