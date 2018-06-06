@@ -7,19 +7,19 @@
  */
 namespace api\controllers;
 
+use Yii;
 use common\exceptions\ApiException;
 use common\models\User;
-use Yii;
 use yii\filters\Cors;
 use yii\helpers\ArrayHelper;
 use yii\rest\ActiveController;
 use yii\filters\auth\CompositeAuth;
 use yii\filters\auth\QueryParamAuth;
 use yii\web\Response;
+use api\auth\Auth;
 
 class BaseController extends ActiveController
 {
-    public $isAuth = true;
     public $log;
     /**
      * @var yii/web/request.
@@ -54,24 +54,16 @@ class BaseController extends ActiveController
     {
         $behaviors = parent::behaviors();
 
-        unset($behaviors['authenticator']);
+        //格式化响应为json
+        $behaviors['contentNegotiator']['formats']['text/html'] = Response::FORMAT_JSON;
 
+        unset($behaviors['authenticator']);
         //跨域处理
         if(isset(Yii::$app->params['cors'])){
             $behaviors['corsFilter'] = [
                 'class' => Cors::class,
                 //配置该类的cors属性
                 'cors' => Yii::$app->params['cors']
-            ];
-        }
-
-        // 需要用户验证
-        if ($this->isAuth){
-            $behaviors['authenticator'] = [
-                'class' => CompositeAuth::className(),
-                'authMethods' => [
-                    QueryParamAuth::className(),
-                ],
             ];
         }
 
@@ -85,12 +77,17 @@ class BaseController extends ActiveController
             }
 
             $this->enableCsrfValidation = false;
-        }elseif($this->isAuth){
+        }elseif(isset(Yii::$app->params['Authorization']) && !Yii::$app->params['Authorization']){
             Yii::$app->user->login(User::findByUsername('root'));
         }
 
-        //格式化响应为json
-        $behaviors['contentNegotiator']['formats']['text/html'] = Response::FORMAT_JSON;
+        // 需要用户验证
+        $behaviors['authenticator'] = [
+            'class' => CompositeAuth::className(),
+            'authMethods' => [
+                Auth::className(),
+            ],
+        ];
         return $behaviors;
     }
 

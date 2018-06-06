@@ -40,6 +40,7 @@ return [
             'identityClass' => 'common\models\User',
             'enableSession' => false,
             'enableAutoLogin' => true,
+            'loginUrl' => null
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend

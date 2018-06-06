@@ -16,7 +16,6 @@ use yii\web\IdentityInterface;
 class LoginController extends BaseController
 {
     public $modelClass = '';
-    public $isAuth = false;
     public function actionLogin(){
         $model = new LoginForm();
         $model->load(['LoginForm' => Yii::$app->request->post()]);
