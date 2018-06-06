@@ -7,11 +7,22 @@
  */
 namespace api\controllers;
 
-class ErrorController extends BaseController
+use yii\rest\Controller;
+use yii\web\Response;
+
+class ErrorController extends Controller
 {
-    public $modelClass = '';
 
     public function actionInfo()
     {
+        $response = \Yii::$app->response;
+        $statusCode = $response->statusCode;
+        $msg = Response::$httpStatuses[$statusCode];
+
+        $responseMsg['code'] = substr($statusCode, 0, 1) . '00' . substr($statusCode, 1, 2);
+        $responseMsg['message'] = $msg;
+        $responseMsg['data'] = '';
+
+        return $responseMsg;
     }
 }

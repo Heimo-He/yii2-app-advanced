@@ -14,7 +14,6 @@ use yii\filters\Cors;
 use yii\helpers\ArrayHelper;
 use yii\rest\ActiveController;
 use yii\filters\auth\CompositeAuth;
-use yii\filters\auth\QueryParamAuth;
 use yii\web\Response;
 use api\auth\Auth;
 
@@ -79,15 +78,16 @@ class BaseController extends ActiveController
             $this->enableCsrfValidation = false;
         }elseif(isset(Yii::$app->params['Authorization']) && !Yii::$app->params['Authorization']){
             Yii::$app->user->login(User::findByUsername('root'));
+        }else{
+            // 需要用户验证
+            $behaviors['authenticator'] = [
+                'class' => CompositeAuth::className(),
+                'authMethods' => [
+                    Auth::className(),
+                ],
+            ];
         }
 
-        // 需要用户验证
-        $behaviors['authenticator'] = [
-            'class' => CompositeAuth::className(),
-            'authMethods' => [
-                Auth::className(),
-            ],
-        ];
         return $behaviors;
     }
 
