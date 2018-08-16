@@ -14,6 +14,7 @@ return [
         'extraPatterns' => [
             'OPTIONS <action:.+>' => 'options',
             'POST' => 'login',
+            'POST test' => 'test',
         ]
     ]
 ];

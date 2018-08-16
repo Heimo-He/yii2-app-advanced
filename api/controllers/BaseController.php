@@ -13,9 +13,7 @@ use common\models\User;
 use yii\filters\Cors;
 use yii\helpers\ArrayHelper;
 use yii\rest\ActiveController;
-use yii\filters\auth\CompositeAuth;
 use yii\web\Response;
-use api\auth\Auth;
 
 class BaseController extends ActiveController
 {
@@ -34,6 +32,9 @@ class BaseController extends ActiveController
         'message' => '请求成功',
     ];
 
+    /**
+     * @throws \yii\base\InvalidConfigException
+     */
     public function init()
     {
         $this->identity = Yii::$app->user->identity;
@@ -49,6 +50,10 @@ class BaseController extends ActiveController
         return $actions;
     }
 
+    /**
+     * @return array
+     * @throws ApiException
+     */
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -60,7 +65,7 @@ class BaseController extends ActiveController
         //跨域处理
         if(isset(Yii::$app->params['cors'])){
             $behaviors['corsFilter'] = [
-                'class' => Cors::class,
+                'class' => Cors::className(),
                 //配置该类的cors属性
                 'cors' => Yii::$app->params['cors']
             ];
@@ -79,13 +84,7 @@ class BaseController extends ActiveController
         }elseif(isset(Yii::$app->params['Authorization']) && !Yii::$app->params['Authorization']){
             Yii::$app->user->login(User::findByUsername('root'));
         }else{
-            // 需要用户验证
-            $behaviors['authenticator'] = [
-                'class' => CompositeAuth::className(),
-                'authMethods' => [
-                    Auth::className(),
-                ],
-            ];
+
         }
 
         return $behaviors;
@@ -187,10 +186,13 @@ class BaseController extends ActiveController
 
     /**
      * 主要用于拦截action中抛出的ApiException异常，以便规范化数据结构
+     *
      * @param string $id
-     * @param array $params
+     * @param array  $params
+     *
      * @return mixed
-     * @throws ApiException
+     * @throws ApiException*
+     * @throws \yii\base\InvalidRouteException
      */
     public function runAction($id, $params = []){
         try{

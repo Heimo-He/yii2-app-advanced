@@ -8,6 +8,7 @@
 namespace api\controllers;
 
 use common\exceptions\ApiException;
+use common\models\User;
 use Yii;
 use common\models\LoginForm;
 use yii\web\IdentityInterface;
@@ -16,6 +17,11 @@ use yii\web\IdentityInterface;
 class LoginController extends BaseController
 {
     public $modelClass = '';
+
+    /**
+     * @return array
+     * @throws ApiException
+     */
     public function actionLogin(){
         $model = new LoginForm();
         $model->load(['LoginForm' => Yii::$app->request->post()]);
@@ -30,6 +36,9 @@ class LoginController extends BaseController
                 return $user->errors;
             }
         }
-        throw new ApiException(400,'用户名密码错误',Yii::$app->request->post());
+        throw new ApiException(400,'用户名密码错误');
+    }
+    public function actionTest(){
+        return User::find()->all();
     }
 }

@@ -26,6 +26,8 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'api\controllers',
     'bootstrap' => ['log'],
+    'defaultRoute'=>'index',
+    'language' => 'zh-CN',
     'modules' => [],
     'components' => [
         'request' => [
@@ -61,6 +63,14 @@ return [
             'enableStrictParsing' => true,
             'rules' => $rules,
         ],
+    ],
+    'as access' => [
+        'class' => 'heimo\rbac\components\AccessControl',
+        'allowActions' => [//允许访问的节点，可自行添加
+            'login/*',
+            'logout/*',
+            'callback/*',
+        ]
     ],
     'params' => $params,
 ];
