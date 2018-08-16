@@ -7,6 +7,7 @@ return [
             'username' => 'root',
             'password' => '',
             'charset' => 'utf8',
+            'tablePrefix' => 'mcs_'
         ],
         'redis' => [
             'class' => 'yii\redis\Connection',
