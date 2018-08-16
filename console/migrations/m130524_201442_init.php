@@ -35,10 +35,11 @@ class m130524_201442_init extends Migration
 
     public function initSql(){
         $now = time();
+        $password = Yii::$app->getSecurity()->generatePasswordHash('password');
         $initSql = <<<SQL
 INSERT INTO `mcs_user` (`username`, `access_token`, `auth_key`, `password_hash`, `password_reset_token`, `email`, `status`, `created_at`, `updated_at`)
 VALUES
-	('root', '', '', '$2y$10\$yLdDeWlbHWgQht2S.8m7VeLssUquehUrAJRwCA4wjFIpkGCm7yqyC', '', '', 10, $now, $now);
+	('root', '', '', $password, '', '', 10, $now, $now);
 SQL;
 
         Yii::$app->db->createCommand($initSql)->execute();
