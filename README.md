@@ -1,4 +1,6 @@
 > 基于Yii2改MCS架构用于开发restful api web应用
+>
+> MCS=Model+Controller+Service
 
 ### 安装方式
 
