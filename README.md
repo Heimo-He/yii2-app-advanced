@@ -2,9 +2,17 @@
 
 ### 安装方式
 
-- `php init`
+- 初始化环境
 
-- `composer install`
+```php
+php init
+```
+
+- 安装依赖
+
+```php
+composer install
+```
 
 - 完善`common/config/main-local.php`中mysql配置和redis配置
 
