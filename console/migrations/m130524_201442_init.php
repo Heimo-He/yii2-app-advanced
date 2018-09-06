@@ -34,14 +34,19 @@ class m130524_201442_init extends Migration
     }
 
     public function initSql(){
-        $now = time();
-        $password = Yii::$app->getSecurity()->generatePasswordHash('password');
-        $initSql = <<<SQL
-INSERT INTO `mcs_user` (`username`, `access_token`, `auth_key`, `password_hash`, `password_reset_token`, `email`, `status`, `created_at`, `updated_at`)
-VALUES
-	('root', '', '', $password, '', '', 10, $now, $now);
-SQL;
+        $security = Yii::$app->security;
+        $columns = ['email', 'username', 'password_hash', 'status', 'created_at', 'access_token', 'auth_key'];
 
-        Yii::$app->db->createCommand($initSql)->execute();
+        $this->batchInsert('{{%user}}', $columns, [
+            [
+                'admin@test.com',
+                'admin',
+                $security->generatePasswordHash('admin_2018'), // admin
+                10,
+                date('Y-m-d H:i:s'),
+                $security->generateRandomString(),
+                $security->generateRandomString()
+            ],
+        ]);
     }
 }
