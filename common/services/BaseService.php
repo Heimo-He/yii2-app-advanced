@@ -52,7 +52,7 @@ class Service
      *
      * @return array
      */
-    public static function returnRet($code, $message, $data = null)
+    public static function returnRet($code, $message, $data = [])
     {
         return [
             'code' => (int) $code,
